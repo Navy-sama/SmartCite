@@ -1,6 +1,6 @@
 import {router} from 'expo-router';
 import React, {useState} from 'react';
-import {StyleSheet, Text, TextInput, TouchableOpacity, View} from 'react-native';
+import {Image, StyleSheet, Text, TextInput, TouchableOpacity, View} from 'react-native';
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 
 export default function LogScreen() {
@@ -9,6 +9,7 @@ export default function LogScreen() {
     const [confirmPassword, setConfirmPassword] = useState('');
     const [login, setLogin] = useState(true);
     const [showPassword, setShowPassword] = useState(false);
+    const profileImage = require('../assets/images/icon.png');
 
     const handleLogin = () => {
         // Ajoutez ici la logique pour sauvegarder les données
@@ -24,6 +25,10 @@ export default function LogScreen() {
 
     return (
         <View style={styles.container}>
+            <Image
+                source={profileImage}
+                resizeMode="cover"
+            />
             <Text style={styles.title}>SMART CITE</Text>
             <Text style={styles.subtitle}>Signalez, changez votre ville</Text>
             <View style={styles.buttonContainer}>
