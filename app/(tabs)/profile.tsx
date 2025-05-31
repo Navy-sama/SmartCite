@@ -1,10 +1,15 @@
-import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, TextInput } from 'react-native';
-import { router } from 'expo-router';
-import { MaterialIcons } from '@expo/vector-icons';
+import React, {useState} from 'react';
+import {Alert, StyleSheet, Text, TextInput, TouchableOpacity, View} from 'react-native';
+import {router} from 'expo-router';
+import {MaterialIcons} from '@expo/vector-icons';
+import {signOut} from "@/data/api";
+import {useProfile} from "@/data/contexts/profile";
+import {useUser} from "@/data/contexts/user";
 
 export default function ProfileScreen() {
-    const [username, setUsername] = useState('Navy-sama');
+    // const {user} = useUser()
+    const {profile} = useProfile()
+    const [username, setUsername] = useState(profile?.username);
     const [password, setPassword] = useState('PASSWORD');
     const [edit, setEdit] = useState(false);
     const [editedUsername, setEditedUsername] = useState('');
@@ -26,11 +31,18 @@ export default function ProfileScreen() {
             if (editedPassword) setPassword(editedPassword);
             setEdit(false);
         }
-        console.log('Navigating to Edit Profile', { username, password });
+        console.log('Navigating to Edit Profile', {username, password});
     };
 
-    const handleLogout = () => {
-        router.replace('/');
+    const handleLogout = async () => {
+        try {
+            const response = await signOut();
+            if (response) {
+                router.replace('/');
+            }
+        } catch (error: any) {
+            Alert.alert('Error', error.message);
+        }
     };
 
     return (
@@ -38,12 +50,12 @@ export default function ProfileScreen() {
             <Text style={styles.header}>Profile</Text>
 
             <View style={styles.profileIconContainer}>
-                <MaterialIcons name="person" size={60} color="#000" style={styles.profileIcon} />
+                <MaterialIcons name="person" size={60} color="#000" style={styles.profileIcon}/>
             </View>
 
             <View style={styles.infoContainer}>
                 <View style={styles.infoRow}>
-                    <MaterialIcons name="person-outline" size={24} color="#666" />
+                    <MaterialIcons name="person-outline" size={24} color="#666"/>
                     {edit ? (
                         <TextInput
                             style={styles.input}
@@ -57,26 +69,26 @@ export default function ProfileScreen() {
                 </View>
 
                 <View style={styles.infoRow}>
-                    <MaterialIcons name="lock-outline" size={24} color="#666" />
-                    {edit ? ( <>
-                        <TextInput
-                            style={styles.input}
-                            value={editedPassword}
-                            onChangeText={setEditedPassword}
-                            placeholder="Enter password"
-                            secureTextEntry={showPassword}
-                        />
-                        <TouchableOpacity
-                        style={styles.toggleButton}
-                        onPress={() => setShowPassword(!showPassword)}
-                    >
-                        <MaterialIcons
-                            name={showPassword ? 'visibility-off' : 'visibility'}
-                            size={24}
-                            color="#000"
-                        />
-                    </TouchableOpacity>
-                    </>
+                    <MaterialIcons name="lock-outline" size={24} color="#666"/>
+                    {edit ? (<>
+                            <TextInput
+                                style={styles.input}
+                                value={editedPassword}
+                                onChangeText={setEditedPassword}
+                                placeholder="Enter password"
+                                secureTextEntry={showPassword}
+                            />
+                            <TouchableOpacity
+                                style={styles.toggleButton}
+                                onPress={() => setShowPassword(!showPassword)}
+                            >
+                                <MaterialIcons
+                                    name={showPassword ? 'visibility-off' : 'visibility'}
+                                    size={24}
+                                    color="#000"
+                                />
+                            </TouchableOpacity>
+                        </>
                     ) : (
                         <Text style={styles.infoText}>{password}</Text>
                     )}
@@ -102,10 +114,10 @@ export default function ProfileScreen() {
                 <TouchableOpacity style={styles.saveButton} onPress={handleLogout}>
                     <Text style={styles.logoutText}>Déconnexion?</Text>
                     <MaterialIcons
-                            name='logout'
-                            size={14}
-                            color="#666"
-                        />
+                        name='logout'
+                        size={14}
+                        color="#666"
+                    />
                 </TouchableOpacity>
             </View>
         </View>
@@ -113,8 +125,8 @@ export default function ProfileScreen() {
 }
 
 const styles = StyleSheet.create({
-    container: { flex: 1, alignItems: 'center', paddingTop: 20, backgroundColor: '#fff', justifyContent: 'center' },
-    header: { fontSize: 24, fontWeight: 'bold', fontFamily: 'SpaceMono', marginBottom: 20, color: '#000' },
+    container: {flex: 1, alignItems: 'center', paddingTop: 20, backgroundColor: '#fff', justifyContent: 'center'},
+    header: {fontSize: 24, fontWeight: 'bold', fontFamily: 'SpaceMono', marginBottom: 20, color: '#000'},
     profileIconContainer: {
         width: 100,
         height: 100,
@@ -125,9 +137,9 @@ const styles = StyleSheet.create({
         marginBottom: 20,
     },
     profileIcon: {},
-    infoContainer: { width: '80%', marginBottom: 20 },
-    infoRow: { flexDirection: 'row', alignItems: 'center', marginVertical: 10 },
-    infoText: { marginLeft: 10, fontSize: 16, fontFamily: 'SpaceMono', color: '#000' },
+    infoContainer: {width: '80%', marginBottom: 20},
+    infoRow: {flexDirection: 'row', alignItems: 'center', marginVertical: 10},
+    infoText: {marginLeft: 10, fontSize: 16, fontFamily: 'SpaceMono', color: '#000'},
     actionContainer: {width: '80%', alignItems: 'center', gap: 70, marginBottom: 20},
     input: {
         marginLeft: 10,
@@ -155,7 +167,14 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         justifyContent: 'center',
     },
-    saveButton: {alignItems: 'center', marginTop: 20, flexDirection: 'row', justifyContent: 'center', gap: 5, borderRadius: 100},
-    editButtonText: { color: '#fff', fontWeight: 'bold', fontFamily: 'SpaceMono' },
-    logoutText: { fontSize: 14, fontFamily: 'SpaceMono', color: '#666' },
+    saveButton: {
+        alignItems: 'center',
+        marginTop: 20,
+        flexDirection: 'row',
+        justifyContent: 'center',
+        gap: 5,
+        borderRadius: 100
+    },
+    editButtonText: {color: '#fff', fontWeight: 'bold', fontFamily: 'SpaceMono'},
+    logoutText: {fontSize: 14, fontFamily: 'SpaceMono', color: '#666'},
 });

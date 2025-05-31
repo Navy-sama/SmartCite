@@ -3,6 +3,8 @@ import {useFonts} from 'expo-font';
 import {Stack} from 'expo-router';
 import {StatusBar} from 'expo-status-bar';
 import 'react-native-reanimated';
+import UserProvider from "@/data/contexts/user";
+import ProfileProvider from "@/data/contexts/profile";
 
 export default function RootLayout() {
     const [loaded] = useFonts({
@@ -16,12 +18,16 @@ export default function RootLayout() {
 
     return (
         <ThemeProvider value={DefaultTheme}>
-            <Stack>
-                <Stack.Screen name="index" options={{headerShown: false}}/>
-                <Stack.Screen name="(tabs)" options={{headerShown: false}}/>
-                <Stack.Screen name="+not-found"/>
-            </Stack>
-            <StatusBar style="auto"/>
+            <UserProvider>
+                <ProfileProvider>
+                    <Stack>
+                        <Stack.Screen name="index" options={{headerShown: false}}/>
+                        <Stack.Screen name="(tabs)" options={{headerShown: false}}/>
+                        <Stack.Screen name="+not-found"/>
+                    </Stack>
+                    <StatusBar style="auto"/>
+                </ProfileProvider>
+            </UserProvider>
         </ThemeProvider>
     );
 }
