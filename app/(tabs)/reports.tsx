@@ -1,6 +1,6 @@
 import { FlatList, StyleSheet, Text, View } from 'react-native';
 import SignalementCard from '../../components/SignalementCard';
-import { useSignalementStore } from '../../store/signalementStore';
+import { useSignalementStore } from '@/store/signalementStore';
 
 export default function ReportsScreen() {
   const { signalements } = useSignalementStore();
@@ -14,7 +14,7 @@ export default function ReportsScreen() {
         keyExtractor={(item) => item.id.toString()}
         renderItem={({ item }) => <SignalementCard signalement={item} />}
         ListEmptyComponent={<Text>Aucun signalement pour l’instant.</Text>}
-        contentContainerStyle={{ paddingBottom: 20 }}
+        contentContainerStyle={{ margin: 20 }}
       />
     </View>
   );
@@ -25,7 +25,7 @@ const styles = StyleSheet.create({
   header: {
     fontSize: 24,
     fontWeight: 'bold',
-    marginBottom: 15,
+    marginTop: 50,
     textAlign: 'center',
     color: '#333',
   },

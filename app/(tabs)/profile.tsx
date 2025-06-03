@@ -1,43 +1,51 @@
 import React, {useState} from 'react';
-import {Alert, StyleSheet, Text, TextInput, TouchableOpacity, View} from 'react-native';
+import {Alert, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {router} from 'expo-router';
 import {MaterialIcons} from '@expo/vector-icons';
-import {signOut} from "@/data/api";
-import {useProfile} from "@/data/contexts/profile";
+import {signOut, updateProfile, updateUser} from "@/data/api";
+import {ProfileForm} from "@/components/forms/ProfileForm";
 import {useUser} from "@/data/contexts/user";
+import {useProfile} from "@/data/contexts/profile";
+
+interface FormValues {
+    username: any;
+    first_name: any;
+    last_name: any;
+    email: any;
+    phone: any;
+    avatar: any;
+}
 
 export default function ProfileScreen() {
-    // const {user} = useUser()
-    const {profile} = useProfile()
-    const [username, setUsername] = useState(profile?.username);
-    const [password, setPassword] = useState('PASSWORD');
-    const [edit, setEdit] = useState(false);
-    const [editedUsername, setEditedUsername] = useState('');
-    const [editedPassword, setEditedPassword] = useState('');
-    const [showPassword, setShowPassword] = useState(false);
+    const {Logout} = useUser();
+    const {profile, handleClearProfile} = useProfile();
+    const [isLoading, setIsLoading] = useState(false);
 
-    const handleEditProfile = (user?: string) => {
-        if (!edit) {
-            setEdit(true);
-            setEditedUsername(username);
-            setEditedPassword(password);
-            return;
-        }
-        if (edit) {
-            if (user) {
-                setUsername(user);
+    const handleEditProfile = async (values: FormValues, mail: boolean) => {
+        setIsLoading(true);
+        console.log(values);
+        console.log(mail);
+        const id = profile.id;
+        try {
+            const response = await updateProfile(id, values);
+            if (response && mail) {
+                const res = await updateUser(values.email)
+                console.log(res);
             }
-            if (editedUsername) setUsername(editedUsername)
-            if (editedPassword) setPassword(editedPassword);
-            setEdit(false);
+            Alert.alert('Succès', 'Compte mis à jour avec succès');
+        } catch (error: any) {
+            Alert.alert('Error', error.message);
+        } finally {
+            setIsLoading(false);
         }
-        console.log('Navigating to Edit Profile', {username, password});
     };
 
     const handleLogout = async () => {
         try {
             const response = await signOut();
             if (response) {
+                Logout();
+                handleClearProfile();
                 router.replace('/');
             }
         } catch (error: any) {
@@ -47,70 +55,13 @@ export default function ProfileScreen() {
 
     return (
         <View style={styles.container}>
-            <Text style={styles.header}>Profile</Text>
 
-            <View style={styles.profileIconContainer}>
-                <MaterialIcons name="person" size={60} color="#000" style={styles.profileIcon}/>
-            </View>
-
-            <View style={styles.infoContainer}>
-                <View style={styles.infoRow}>
-                    <MaterialIcons name="person-outline" size={24} color="#666"/>
-                    {edit ? (
-                        <TextInput
-                            style={styles.input}
-                            value={editedUsername}
-                            onChangeText={setEditedUsername}
-                            placeholder="Enter username"
-                        />
-                    ) : (
-                        <Text style={styles.infoText}>{username}</Text>
-                    )}
-                </View>
-
-                <View style={styles.infoRow}>
-                    <MaterialIcons name="lock-outline" size={24} color="#666"/>
-                    {edit ? (<>
-                            <TextInput
-                                style={styles.input}
-                                value={editedPassword}
-                                onChangeText={setEditedPassword}
-                                placeholder="Enter password"
-                                secureTextEntry={showPassword}
-                            />
-                            <TouchableOpacity
-                                style={styles.toggleButton}
-                                onPress={() => setShowPassword(!showPassword)}
-                            >
-                                <MaterialIcons
-                                    name={showPassword ? 'visibility-off' : 'visibility'}
-                                    size={24}
-                                    color="#000"
-                                />
-                            </TouchableOpacity>
-                        </>
-                    ) : (
-                        <Text style={styles.infoText}>{password}</Text>
-                    )}
-                </View>
-            </View>
+            <ProfileForm
+                onUpdate={handleEditProfile}
+                loading={isLoading}
+            />
 
             <View style={styles.actionContainer}>
-                <TouchableOpacity style={styles.editButton} onPress={() => handleEditProfile()}>
-                    {!edit ? (
-                        <>
-                            <Text style={styles.editButtonText}>Editer</Text>
-                            <MaterialIcons
-                                name='edit'
-                                size={14}
-                                color="#fff"
-                            />
-                        </>
-                    ) : (
-                        <Text style={styles.editButtonText}>Valider</Text>
-                    )}
-                </TouchableOpacity>
-
                 <TouchableOpacity style={styles.saveButton} onPress={handleLogout}>
                     <Text style={styles.logoutText}>Déconnexion?</Text>
                     <MaterialIcons
@@ -126,47 +77,7 @@ export default function ProfileScreen() {
 
 const styles = StyleSheet.create({
     container: {flex: 1, alignItems: 'center', paddingTop: 20, backgroundColor: '#fff', justifyContent: 'center'},
-    header: {fontSize: 24, fontWeight: 'bold', fontFamily: 'SpaceMono', marginBottom: 20, color: '#000'},
-    profileIconContainer: {
-        width: 100,
-        height: 100,
-        borderRadius: 50,
-        backgroundColor: '#ccc',
-        justifyContent: 'center',
-        alignItems: 'center',
-        marginBottom: 20,
-    },
-    profileIcon: {},
-    infoContainer: {width: '80%', marginBottom: 20},
-    infoRow: {flexDirection: 'row', alignItems: 'center', marginVertical: 10},
-    infoText: {marginLeft: 10, fontSize: 16, fontFamily: 'SpaceMono', color: '#000'},
     actionContainer: {width: '80%', alignItems: 'center', gap: 70, marginBottom: 20},
-    input: {
-        marginLeft: 10,
-        borderWidth: 1,
-        borderColor: '#ccc',
-        padding: 5,
-        borderRadius: 5,
-        fontFamily: 'SpaceMono',
-        fontSize: 16,
-        color: '#000',
-        flex: 1,
-    },
-    toggleButton: {
-        position: 'absolute',
-        right: 10,
-        padding: 10,
-    },
-    editButton: {
-        backgroundColor: '#000',
-        paddingVertical: 10,
-        paddingHorizontal: 20,
-        borderRadius: 5,
-        marginBottom: 20,
-        gap: 5,
-        flexDirection: 'row',
-        justifyContent: 'center',
-    },
     saveButton: {
         alignItems: 'center',
         marginTop: 20,
@@ -175,6 +86,5 @@ const styles = StyleSheet.create({
         gap: 5,
         borderRadius: 100
     },
-    editButtonText: {color: '#fff', fontWeight: 'bold', fontFamily: 'SpaceMono'},
     logoutText: {fontSize: 14, fontFamily: 'SpaceMono', color: '#666'},
 });

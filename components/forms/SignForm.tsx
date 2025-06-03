@@ -159,7 +159,7 @@ export const SignForm: React.FC<SignFormProps> = ({onLogin, onRegister, login = 
                         <MaterialIcons name="login" size={24} color="#FFF"/>
                     </TouchableOpacity>
 
-                    {loading && <ActivityIndicator size="large" color="#0000ff" />}
+                    {loading && <ActivityIndicator size="large" color="#000000" />}
                 </>
             )
             }

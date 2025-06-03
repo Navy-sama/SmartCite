@@ -1,7 +1,7 @@
 import {getCurrentProfile, getCurrentUser, signIn, signUp} from '@/data/api';
 import {SignForm} from '@/components/forms/SignForm';
 import {router} from 'expo-router';
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {Alert, KeyboardAvoidingView, ScrollView, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
 import {FormikHelpers} from 'formik';
 import {useUser} from "@/data/contexts/user";
@@ -17,8 +17,13 @@ interface FormValues {
 export default function LogScreen() {
     const [login, setLogin] = useState(true);
     const [isLoading, setIsLoading] = useState(false);
-    const {Login} = useUser();
+    const {user, Login} = useUser();
     const {handleSetProfile} = useProfile();
+
+    useEffect(() => {
+        if(user)
+            router.replace('/(tabs)/home');
+    }, [user]);
 
     const handleLogin = async (values: { username: string; password: string }) => {
         console.log('Username:', values.username, 'Password:', values.password);
@@ -26,10 +31,10 @@ export default function LogScreen() {
         try {
             const response = await signIn(values.username, values.password);
             if (response) {
-                const user = await getCurrentUser();
-                Login(user);
                 const profile = await getCurrentProfile(values.username);
                 handleSetProfile(profile);
+                const user = await getCurrentUser();
+                Login(user);
                 router.replace('/(tabs)/home');
             }
         } catch (error: any) {
@@ -53,7 +58,10 @@ export default function LogScreen() {
                         'Signup successful! Please check your email to confirm your account.'
                     );
                 } else {
+                    const profile = await getCurrentProfile(values.username);
+                    handleSetProfile(profile);
                     const user = await getCurrentUser();
+                    Login(user);
                     console.log(user);
                     router.replace('/(tabs)/home');
                 }

@@ -7,8 +7,10 @@ import UserProvider from "@/data/contexts/user";
 import ProfileProvider from "@/data/contexts/profile";
 
 export default function RootLayout() {
+
     const [loaded] = useFonts({
         SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
+        // TwemojiMozilla: require('../assets/fonts/TwemojiMozilla.woff2'),
     });
 
     if (!loaded) {
