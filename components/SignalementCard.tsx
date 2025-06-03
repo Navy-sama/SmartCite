@@ -1,79 +1,61 @@
 import { IconSymbol } from '@/components/ui/IconSymbol';
-import { useState } from 'react';
+import { Ionicons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
 import {
   Image,
-  Modal,
-  Pressable,
   StyleSheet,
   Text,
   TouchableOpacity,
-  View,
+  View
 } from 'react-native';
-import { Signalement, useSignalementStore } from '../store/signalementStore';
+import { Signalement } from '../store/signalementStore';
+
+
 
 type Props = {
   signalement: Signalement;
 };
 
 export default function SignalementCard({ signalement }: Props) {
-  const deleteSignalement = useSignalementStore(state => state.deleteSignalement);
-  const [menuVisible, setMenuVisible] = useState(false);
-  const [imageModalVisible, setImageModalVisible] = useState(false); 
+  const getRelativeTime = (timestamp: number) => {
+  const diff = Date.now() - timestamp;
+  const minutes = Math.floor(diff / 60000);
+  if (minutes < 1) return "envoyé à l'instant";
+  if (minutes < 60) return `envoyé il y a ${minutes} min`;
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `envoyé il y a ${hours} h`;
+  const days = Math.floor(hours / 24);
+  return `envoyé il y a ${days} j`;
+  };
+  const router = useRouter();
+
+  const goToDetail = () => {
+    router.push({
+      pathname: '/detail/[id]',
+      params: { id: signalement.id.toString() },
+    });
+  };
 
   return (
-    <View style={styles.card}>
-      <TouchableOpacity onPress={() => setImageModalVisible(true)}>
-        <Image source={{ uri: signalement.photo }} style={styles.image} />
-      </TouchableOpacity>
+    <TouchableOpacity onPress={goToDetail} style={styles.card}>
+      <Image source={{ uri: signalement.photo }} style={styles.image} />
 
       <View style={styles.details}>
         <Text style={styles.label}>{signalement.categorie}</Text>
-        <Text>{signalement.description}</Text>
 
-        {/* ✅ Localisation avec icône */}
         <View style={styles.locationRow}>
           <IconSymbol name="mappin.and.ellipse" size={16} color="#555" />
           <Text style={styles.loc}>{signalement.location}</Text>
         </View>
 
         <Text style={styles.status}>Statut : {signalement.statut}</Text>
+        <Text style={styles.time}>{getRelativeTime(signalement.date)}</Text>
       </View>
 
-      <TouchableOpacity onPress={() => setMenuVisible(true)}>
-        <Text style={styles.menuIcon}>⋮</Text>
+       <TouchableOpacity onPress={goToDetail} style={styles.infoIcon}>
+        <Ionicons name="information-circle-outline" size={24} color="#555" />
       </TouchableOpacity>
-
-      {/* Modal pour menu Modifier / Supprimer */}
-      <Modal
-        transparent
-        animationType="fade"
-        visible={menuVisible}
-        onRequestClose={() => setMenuVisible(false)}
-      >
-        <Pressable style={styles.overlay} onPress={() => setMenuVisible(false)}>
-          <View style={styles.menu}>
-            <Pressable onPress={() => { alert("Modifier"); setMenuVisible(false); }}>
-              <Text style={styles.menuItem}>Modifier</Text>
-            </Pressable>
-            <Pressable onPress={() => { deleteSignalement(signalement.id); setMenuVisible(false); }}>
-              <Text style={[styles.menuItem, { color: 'red' }]}>Supprimer</Text>
-            </Pressable>
-          </View>
-        </Pressable>
-      </Modal>
-
-      {/* Modal pour agrandir l’image */}
-      <Modal
-        visible={imageModalVisible}
-        transparent
-        animationType="fade"
-        onRequestClose={() => setImageModalVisible(false)}
-      >
-        <Pressable style={styles.imageOverlay} onPress={() => setImageModalVisible(false)}>
-          <Image source={{ uri: signalement.photo }} style={styles.fullImage} />
-        </Pressable>
-      </Modal>
-    </View>
+    </TouchableOpacity>
   );
 }
 
@@ -104,7 +86,6 @@ const styles = StyleSheet.create({
     gap: 6, // ou utilisez marginRight dans l'icône si gap n'est pas supporté
   },
   loc: {
-    fontStyle: 'italic',
     fontSize: 12,
     color: '#555',
   },
@@ -143,5 +124,15 @@ const styles = StyleSheet.create({
   menuItem: {
     fontSize: 16,
     padding: 10,
+  },
+  time: {
+  fontSize: 12,
+  color: '#999',
+  marginTop: 4,
+  fontStyle: 'italic',
+  },
+  infoIcon: {
+    paddingLeft: 10,
+    paddingRight: 4,
   },
 });

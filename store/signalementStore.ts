@@ -7,6 +7,7 @@ export type Signalement = {
   description: string;
   location: string;
   statut: 'en attente' | 'en cours' | 'résolu';
+  date: number;
 };
 
 type Store = {

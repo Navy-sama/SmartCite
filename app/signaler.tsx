@@ -1,47 +1,46 @@
-import { useNotificationStore } from '@/store/notificationStore';
-import * as ImagePicker from 'expo-image-picker';
-import { useRouter } from 'expo-router';
-import { useState } from 'react';
+import { useNotificationStore } from '@/store/notificationStore'
+import { useSignalementStore } from '@/store/signalementStore'
+import * as ImagePicker from 'expo-image-picker'
+import { useRouter } from 'expo-router'
+import { useState } from 'react'
+import { Image } from 'react-native'
 import {
-  Alert,
   Button,
-  Image,
+  Form,
+  Input,
+  Label,
   ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-} from 'react-native';
-import { useSignalementStore } from '../store/signalementStore';
+  YStack,
+} from 'tamagui'
+
+
 
 export default function AjouterScreen() {
-  const [category, setCategory] = useState('');
-  const [description, setDescription] = useState('');
-  const [image, setImage] = useState<string | null>(null);
-  const [location, setLocation] = useState('');
+  const [category, setCategory] = useState('')
+  const [description, setDescription] = useState('')
+  const [image, setImage] = useState<string | null>(null)
+  const [location, setLocation] = useState('')
 
-  const addSignalement = useSignalementStore(state => state.addSignalement);
-  const addNotification = useNotificationStore(state => state.addNotification);
-
-  const router = useRouter();
+  const addSignalement = useSignalementStore(state => state.addSignalement)
+  const addNotification = useNotificationStore(state => state.addNotification)
+  const router = useRouter()
 
   const pickImage = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       quality: 1,
-    });
+    })
 
     if (!result.canceled) {
-      setImage(result.assets[0].uri);
+      setImage(result.assets[0].uri)
     }
-  };
-
-  const handleSubmit = () => {
-  if (!category || !description || !image || !location) {
-    Alert.alert("Tous les champs sont requis !");
-    return;
   }
 
+  const handleSubmit = () => {
+    if (!category || !description || !image || !location) {
+      alert('Tous les champs sont requis !')
+      return
+    }
 
     addSignalement({
       photo: image,
@@ -49,84 +48,72 @@ export default function AjouterScreen() {
       description,
       location,
       statut: 'en attente',
-    });
+      date: Date.now(),
+    })
 
-    addNotification(`Votre signalement "${category}" a été enregistré avec succès.`);
-
-    router.push('/reports');
-  };
+    addNotification(`Votre signalement "${category}" a été enregistré avec succès.`)
+    router.push('/reports')
+  }
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.label}>Catégorie</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Ex: Nids-de-poule, Lampadaire..."
-        placeholderTextColor="#999"
-        value={category}
-        onChangeText={setCategory}
-      />
+    <ScrollView padding="$4" backgroundColor="$background" flex={1}>
+      <Form onSubmit={handleSubmit} gap="$3">
+        <YStack gap="$2">
+          <Label htmlFor="category">Catégorie</Label>
+          <Input
+            id="category"
+            placeholder="Ex: Nids-de-poule, Lampadaire..."
+            value={category}
+            onChangeText={setCategory}
+          />
+        </YStack>
 
-      <Text style={styles.label}>Description</Text>
-      <TextInput
-        style={[styles.input, styles.textarea]}
-        placeholder="Décris le problème"
-        placeholderTextColor="#999"
-        value={description}
-        onChangeText={setDescription}
-        multiline
-        numberOfLines={4}
-      />
+        <YStack gap="$2">
+          <Label htmlFor="description">Description</Label>
+          <Input
+            id="description"
+            multiline
+            numberOfLines={4}
+            height={100}
+            textAlignVertical="top"
+            placeholder="Décris le problème"
+            value={description}
+            onChangeText={setDescription}
+          />
+        </YStack>
 
-      <Text style={styles.label}>Localisation</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Ex: Carrefour Fouda, Yaoundé"
-        placeholderTextColor="#999"
-        value={location}
-        onChangeText={setLocation}
-      />
+        <YStack gap="$2">
+          <Label htmlFor="location">Localisation</Label>
+          <Input
+            id="location"
+            placeholder="Ex: Carrefour Fouda, Yaoundé"
+            value={location}
+            onChangeText={setLocation}
+          />
+        </YStack>
 
+        <YStack gap="$2">
+          <Label>Photo</Label>
+          {image && (
+            <Image
+              source={{ uri: image }}
+              style={{
+                width: '100%',
+                height: 200,
+                borderRadius: 8,
+                marginBottom: 10,
+              }}
+            />
+          )}
+          <Button theme="blue" onPress={pickImage}>
+            Choisir une photo
+          </Button>
+        </YStack>
 
-
-      <Text style={styles.label}>Photo</Text>
-      {image && <Image source={{ uri: image }} style={styles.image} />}
-      <Button title="Choisir une photo" onPress={pickImage} />
-
-      <View style={{ marginVertical: 20 }}>
-        <Button title="Envoyer le signalement" onPress={handleSubmit} />
-      </View>
+        <Button size="$4" theme="green" marginTop="$4" onPress={handleSubmit}>
+          Envoyer le signalement
+        </Button>
+      </Form>
     </ScrollView>
-  );
+  )
 }
-
-const styles = StyleSheet.create({
-  container: {
-    padding: 20,
-    backgroundColor: '#fff',
-  },
-  label: {
-    fontWeight: 'bold',
-    marginBottom: 5,
-    color: '#333',
-  },
-  input: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    backgroundColor: '#f9f9f9',
-    color: '#000',
-    padding: 10,
-    borderRadius: 6,
-    marginBottom: 15,
-  },
-  textarea: {
-    height: 100,
-    textAlignVertical: 'top',
-  },
-  image: {
-    width: '100%',
-    height: 200,
-    marginBottom: 10,
-    borderRadius: 8,
-  },
-});
