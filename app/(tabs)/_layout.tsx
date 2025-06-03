@@ -1,13 +1,18 @@
 import {Tabs} from 'expo-router';
 import React from 'react';
-import {Platform} from 'react-native';
+import { Platform, View } from 'react-native';
 
 import {HapticTab} from '@/components/HapticTab';
 import {IconSymbol} from '@/components/ui/IconSymbol';
 import TabBarBackground from '@/components/ui/TabBarBackground';
+import { useNotificationStore } from '@/store/notificationStore';
 import {Colors} from '@/constants/Colors';
+import {useCategory} from "@/data/contexts/category";
 
 export default function TabLayout() {
+  const hasUnread = useNotificationStore((state) => state.hasUnread());
+
+    useCategory();
 
     return (
         <Tabs
@@ -47,7 +52,24 @@ export default function TabLayout() {
                 options={{
                     title: '',
                     tabBarShowLabel: false,
-                    tabBarIcon: ({color}) => <IconSymbol size={28} name="note" color={color}/>,
+                    tabBarIcon: ({ color }) => (
+                        <View style={{ position: 'relative' }}>
+                            <IconSymbol size={28} name="bell.fill" color={color} />
+                            {hasUnread && (
+                                <View
+                                    style={{
+                                        position: 'absolute',
+                                        top: -2,
+                                        right: -2,
+                                        width: 10,
+                                        height: 10,
+                                        borderRadius: 5,
+                                        backgroundColor: 'red',
+                                    }}
+                                />
+                            )}
+                        </View>
+                    ),
                 }}
             />
             <Tabs.Screen

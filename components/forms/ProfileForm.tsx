@@ -191,10 +191,12 @@ export const ProfileForm: React.FC<ProfileFormProps> = ({onUpdate, loading = fal
                                 onChangeText={handleChange('email')}
                                 placeholder="Entrez votre email"
                             />
-                            {touched.email && errors.email &&
-                                <Text style={styles.errorText}>*</Text> &&
-                                <Text style={styles.errorText}>{errors.email as string}</Text>}
                         </> : <Text style={styles.infoText}>{values?.email}</Text>}
+                    </View>
+                    <View style={styles.errorContainer}>
+                        {errors.email &&
+                            <Text style={styles.errorText}>*</Text> &&
+                            <Text style={styles.errorText}>{errors.email as string}</Text>}
                     </View>
 
                     <View style={styles.infoRow}>
@@ -250,10 +252,12 @@ export const ProfileForm: React.FC<ProfileFormProps> = ({onUpdate, loading = fal
                                     },
                                 }}
                             />
-                            {touched.phone && errors.phone &&
-                                <Text style={styles.errorText}>*</Text> &&
-                                <Text style={styles.errorText}>{errors.phone as string}</Text>}
                         </> : <Text style={styles.infoText}>{values?.phone}</Text>}
+                    </View>
+                    <View style={styles.errorContainer}>
+                        {errors.phone &&
+                            <Text style={styles.errorText}>*</Text> &&
+                            <Text style={styles.errorText}>{errors.phone as string}</Text>}
                     </View>
                 </View>
 
@@ -367,8 +371,9 @@ const styles = StyleSheet.create({
         marginTop: -5,
     },
     errorContainer: {
-        width: '75%',
         flexDirection: 'row',
         alignItems: 'center',
+        marginBottom: 5,
+        marginLeft: 35,
     },
 });

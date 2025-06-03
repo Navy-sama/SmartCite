@@ -143,3 +143,9 @@ export async function signOut() {
     if (error) throw new Error(error.message);
     return {success: true};
 }
+
+export async function getAllCategories() {
+    const { data, error } = await supabase.functions.invoke('get-all-categories')
+    if (error) throw new Error(error.message);
+    return {data, error};
+}

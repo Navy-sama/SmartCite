@@ -12,7 +12,7 @@ import {
   TextInput,
   View,
 } from 'react-native';
-import { useSignalementStore } from '../store/signalementStore';
+import { useSignalementStore } from '@/store/signalementStore';
 
 export default function AjouterScreen() {
   const [category, setCategory] = useState('');
