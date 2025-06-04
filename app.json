@@ -12,6 +12,12 @@
       "supportsTablet": true
     },
     "android": {
+      "permissions": [
+      "ACCESS_FINE_LOCATION",
+      "CAMERA",
+      "READ_EXTERNAL_STORAGE",
+      "WRITE_EXTERNAL_STORAGE"
+      ],
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundImage": "",
@@ -36,6 +42,9 @@
         }
       ],
       "expo-font"
+      "expo-location",
+      "expo-image-picker"
+
     ],
     "experiments": {
       "typedRoutes": true

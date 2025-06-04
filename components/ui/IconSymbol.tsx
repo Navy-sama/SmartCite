@@ -19,6 +19,10 @@ const MAPPING = {
   'note': 'notifications',
   'chevron.left.forwardslash.chevron.right': 'code',
   'chevron.right': 'chevron-right',
+  'doc.plaintext.fill': 'article',
+  'bell.fill': 'notifications',
+  'person.crop.circle.fill': 'person',
+  'mappin.and.ellipse': 'location-on',
   'person': 'person',
 } as unknown as IconMapping;
 

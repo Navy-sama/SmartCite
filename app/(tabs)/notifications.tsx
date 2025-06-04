@@ -1,8 +1,17 @@
+import { useFocusEffect } from 'expo-router';
+import { useCallback } from 'react';
 import { FlatList, StyleSheet, Text, View } from 'react-native';
 import { useNotificationStore } from '../../store/notificationStore';
 
 export default function NotificationsScreen() {
-  const { notifications } = useNotificationStore();
+  const { notifications, markAllAsRead } = useNotificationStore();
+
+  // Marquer toutes les notifications comme lues à chaque focus
+  useFocusEffect(
+    useCallback(() => {
+      markAllAsRead();
+    }, [])
+  );
 
   return (
     <View style={styles.container}>
