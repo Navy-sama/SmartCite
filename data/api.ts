@@ -1,8 +1,8 @@
-import AsyncStorage from '@react-native-async-storage/async-storage'
-import {createClient} from '@supabase/supabase-js'
-import {processLock} from "@supabase/auth-js/src/lib/locks";
-import {AppState} from "react-native";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { processLock } from "@supabase/auth-js/src/lib/locks";
+import { createClient } from '@supabase/supabase-js';
 import * as Linking from 'expo-linking';
+import { AppState, Platform } from "react-native";
 
 const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL
 const supabaseKey = process.env.EXPO_PUBLIC_SUPABASE_KEY
@@ -12,13 +12,14 @@ if (!supabaseUrl || !supabaseKey) {
     throw new Error('Supabase URL and Anon Key must be provided in environment variables');
 }
 
+// Create Supabase client with platform-specific configuration
 export const supabase = createClient(supabaseUrl, supabaseKey, {
     auth: {
-        storage: AsyncStorage,
+        storage: Platform.OS === 'web' ? undefined : AsyncStorage,
         autoRefreshToken: true,
         persistSession: true,
-        detectSessionInUrl: false,
-        lock: processLock,
+        detectSessionInUrl: Platform.OS === 'web',
+        lock: Platform.OS === 'web' ? undefined : processLock,
     },
 })
 
@@ -47,13 +48,16 @@ export const supabase = createClient(supabaseUrl, supabaseKey, {
     return null;
 }*/
 
-AppState.addEventListener('change', (state) => {
-    if (state === 'active') {
-        supabase.auth.startAutoRefresh()
-    } else {
-        supabase.auth.stopAutoRefresh()
-    }
-})
+// Only add AppState listener on native platforms
+if (Platform.OS !== 'web') {
+    AppState.addEventListener('change', (state) => {
+        if (state === 'active') {
+            supabase.auth.startAutoRefresh()
+        } else {
+            supabase.auth.stopAutoRefresh()
+        }
+    })
+}
 
 export async function signUp(email: string, password: string, username: string) {
     const {data, error} = await supabase.auth.signUp({
