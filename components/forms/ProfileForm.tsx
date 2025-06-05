@@ -140,7 +140,6 @@ export const ProfileForm: React.FC<ProfileFormProps> = ({onUpdate, loading = fal
                             style={styles.deleteIconContainer}
                             onPress={async () => {
                                 const filePath = values.avatar.split('/storage/v1/object/public/')[1].split('/').slice(1).join('/');
-                                console.log(filePath);
                                 await deleteAvatar(filePath)
                                 await setFieldValue('avatar', null)
                             }}

@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {getAllCategories} from "../api";
-import {useUser} from "@/data/contexts/user";
+import {useUser} from "./user";
 
 const CategoryContext = createContext();
 export const useCategory = () => useContext(CategoryContext);
@@ -28,9 +28,7 @@ export const CategoryProvider = ({ children }) => {
             if (error) {
                 throw new Error(error);
             }
-            
-            const res = setCategories(data);
-
+            setCategories(data);
             await AsyncStorage.setItem('categories', JSON.stringify(data));
         } catch (err) {
             setError(err.message || 'Failed to fetch categories');

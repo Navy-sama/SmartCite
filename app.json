@@ -41,7 +41,7 @@
           "backgroundColor": "#ffffff"
         }
       ],
-      "expo-font"
+      "expo-font",
       "expo-location",
       "expo-image-picker"
 

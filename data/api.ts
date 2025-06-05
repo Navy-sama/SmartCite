@@ -153,3 +153,82 @@ export async function getAllCategories() {
     if (error) throw new Error(error.message);
     return {data, error};
 }
+
+export async function getAllReports() {
+    const { data, error } = await supabase.functions.invoke('get-all-reports')
+    if (error) throw new Error(error.message);
+    return {data, error};
+}
+
+export async function getAllReportsById(id: string, session:any) {
+    const { data, error } = await supabase.functions.invoke('get-reports-by-id', {
+        body: { userId: id },headers: {
+            Authorization: `Bearer ${session.access_token}`, // Include JWT if required
+        }
+    })
+    if (error) throw new Error(error.message);
+    return {data, error};
+}
+
+export async function addNewReport(values: any, session:any) {
+    const { data, error } = await supabase.functions.invoke('add-incident',
+        {body: values, headers: {
+        Authorization: `Bearer ${session.access_token}`, // Include JWT if required
+    }})
+    if (error) throw new Error(error.message);
+    return {data, error};
+}
+
+export async function updateReport(values: any, session:any) {
+    const { data, error } = await supabase.functions.invoke('update-incident',
+        {body: values, headers: {
+                Authorization: `Bearer ${session.access_token}`, // Include JWT if required
+            }})
+    if (error) throw new Error(error.message);
+    return {data, error};
+}
+
+export async function deleteReport(id: string, session:any) {
+    const {error} = await supabase.functions.invoke('delete-incident',
+        {
+            body: {id}, headers: {
+                Authorization: `Bearer ${session.access_token}`, // Include JWT if required
+            }
+        })
+    if (error) throw new Error(error.message);
+    return {error};
+}
+
+export async function getAllNotifications() {
+    const { data, error } = await supabase.functions.invoke('get-all-notifications')
+    if (error) throw new Error(error.message);
+    return {data, error};
+}
+
+export async function getAllNotificationsById(id: string, session:any) {
+    const { data, error } = await supabase.functions.invoke('get-notifications-by-id', {
+        body: { userId: id },headers: {
+            Authorization: `Bearer ${session.access_token}`, // Include JWT if required
+        }
+    })
+    if (error) throw new Error(error.message);
+    return {data, error};
+}
+
+export async function sendNotification(values: any, session:any) {
+    const { data, error } = await supabase.functions.invoke('send-notification',
+        {body: values, headers: {
+                Authorization: `Bearer ${session.access_token}`, // Include JWT if required
+            }})
+    if (error) throw new Error(error.message);
+    return {data, error};
+}
+
+export async function markAsRead(values: any, session:any) {
+    const { data, error } = await supabase.functions.invoke('read-notification',
+        {body: values, headers: {
+                Authorization: `Bearer ${session.access_token}`, // Include JWT if required
+            }})
+    if (error) throw new Error(error.message);
+    return {data, error};
+}

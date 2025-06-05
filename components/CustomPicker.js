@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { FlatList, Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
 import { useCategory } from '@/data/contexts/category';
@@ -14,7 +14,7 @@ const CustomCategoryPicker = ({ value, field, setFieldValue }) => {
         <>
             <TouchableOpacity
                 style={styles.pickerButton}
-                onPress={(e) => {
+                onPress={() => {
                     setModalVisible(true)
                 }}
             >
@@ -79,7 +79,7 @@ const styles = StyleSheet.create({
         borderColor: '#ccc',
         borderRadius: 6,
         padding: 10,
-        marginBottom: 15,
+        marginBottom: 5,
         backgroundColor: '#f9f9f9',
     },
     modalContainer: {

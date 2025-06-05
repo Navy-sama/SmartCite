@@ -23,7 +23,7 @@ export default function LogScreen() {
     useEffect(() => {
         if(user)
             router.replace('/(tabs)/home');
-    }, [user]);
+    }, []);
 
     const handleLogin = async (values: { username: string; password: string }) => {
         console.log('Username:', values.username, 'Password:', values.password);
@@ -149,4 +149,3 @@ const styles = StyleSheet.create({
     },
     saveText: {color: '#fff', fontWeight: 'bold'},
 });
-

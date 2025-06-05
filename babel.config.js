@@ -9,9 +9,9 @@ module.exports = function (api) {
       plugins: [
         // Add any plugins you need here
         ['module-resolver', {
-          root: ['./src'],
+          root: ['./'],
           alias: {
-            '@': './src',
+            '@': './',
           },
         }],
       ],

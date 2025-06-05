@@ -1,35 +1,21 @@
-import {FlatList, StyleSheet, Text, TouchableOpacity, View} from 'react-native';
+import {FlatList, StyleSheet, Text, View} from 'react-native';
 import SignalementCard from '../../components/SignalementCard';
-import {useSignalementStore} from '@/store/signalementStore';
-import {MaterialIcons} from "@expo/vector-icons";
-import {router} from "expo-router";
+import {useReport} from "@/data/contexts/reports";
 
 export default function ReportsScreen() {
-    const {signalements} = useSignalementStore();
+    const {reports} = useReport();
 
     return (
         <View style={styles.container}>
             <Text style={styles.header}>Mes Signalements</Text>
 
             <FlatList
-                data={signalements}
+                data={reports}
                 keyExtractor={(item) => item.id.toString()}
                 renderItem={({item}) => <SignalementCard signalement={item}/>}
                 ListEmptyComponent={<Text>Aucun signalement pour l’instant.</Text>}
                 contentContainerStyle={{margin: 20}}
             />
-
-            <View style={{display: 'flex', justifyContent: 'center', alignItems: 'center', width: '100%'}}>
-                <TouchableOpacity onPress={() => router.push("../signaler")}>
-                    <View style={{
-                        backgroundColor: '#aaff00',
-                        width: 50,
-                        borderRadius: 50,
-                    }}>
-                        <MaterialIcons name="add" size={48} color="#666"/>
-                    </View>
-                </TouchableOpacity>
-            </View>
         </View>
     );
 }

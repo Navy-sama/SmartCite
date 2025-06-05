@@ -8,11 +8,13 @@ import TabBarBackground from '@/components/ui/TabBarBackground';
 import { useNotificationStore } from '@/store/notificationStore';
 import {Colors} from '@/constants/Colors';
 import {useCategory} from "@/data/contexts/category";
+import {useReport} from "@/data/contexts/reports";
 
 export default function TabLayout() {
   const hasUnread = useNotificationStore((state) => state.hasUnread());
 
     useCategory();
+    useReport();
 
     return (
         <Tabs
